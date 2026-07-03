@@ -1,3 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+:root {
+  --color-navy: #0f172a;
+  --color-navy-light: #1e293b;
+}
+
+.bg-navy {
+  background-color: var(--color-navy);
+}
+
+.bg-navy-light {
+  background-color: var(--color-navy-light);
+}
