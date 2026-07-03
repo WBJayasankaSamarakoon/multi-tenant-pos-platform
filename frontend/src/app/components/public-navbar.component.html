@@ -1,0 +1,37 @@
+<nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-[72px]">
+      <a routerLink="/" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-700 transition-colors">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </div>
+        <span class="text-lg font-bold text-gray-900">MultiBiz<span class="text-blue-600">POS</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a routerLink="/features" routerLinkActive="text-blue-600" class="text-sm font-medium transition-colors hover:text-blue-600 text-gray-700">Features</a>
+        <a routerLink="/pricing" routerLinkActive="text-blue-600" class="text-sm font-medium transition-colors hover:text-blue-600 text-gray-700">Pricing</a>
+        <a routerLink="/about" routerLinkActive="text-blue-600" class="text-sm font-medium transition-colors hover:text-blue-600 text-gray-700">About</a>
+      </div>
+
+      <div class="hidden md:flex items-center gap-3">
+        <a routerLink="/login" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors px-4 py-2">Sign In</a>
+        <a routerLink="/register" class="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors px-5 py-2.5 rounded-lg shadow-sm">Get Started Free</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="md:hidden bg-white border-t border-gray-100">
+    <div class="px-4 py-4 space-y-1">
+      <a routerLink="/features" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Features</a>
+      <a routerLink="/pricing" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">Pricing</a>
+      <a routerLink="/about" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">About</a>
+      <div class="pt-3 border-t border-gray-100 space-y-2">
+        <a routerLink="/login" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg text-center">Sign In</a>
+        <a routerLink="/register" class="block px-4 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-center">Get Started Free</a>
+      </div>
+    </div>
+  </div>
+</nav>

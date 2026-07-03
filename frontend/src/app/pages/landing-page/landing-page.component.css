@@ -1,0 +1,96 @@
+:host {
+  display: block;
+}
+
+.hero-fade-up,
+.hero-fade-in,
+.hero-preview-rise {
+  opacity: 0;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
+.hero-fade-up {
+  animation-duration: 0.5s;
+  animation-name: fade-up;
+}
+
+.hero-fade-in {
+  animation-duration: 0.5s;
+  animation-name: fade-in;
+}
+
+.hero-preview-rise {
+  animation: fade-up-large 0.7s ease-out 0.4s forwards;
+}
+
+.hero-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.hero-delay-2 {
+  animation-delay: 0.2s;
+}
+
+.hero-delay-3 {
+  animation-delay: 0.3s;
+}
+
+.hero-delay-5 {
+  animation-delay: 0.5s;
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+[data-reveal].reveal-visible {
+  animation: fade-up 0.5s ease-out forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-up-large {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fade-up,
+  .hero-fade-in,
+  .hero-preview-rise,
+  [data-reveal] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

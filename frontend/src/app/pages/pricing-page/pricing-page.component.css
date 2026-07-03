@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.plan-fade-up {
+  opacity: 0;
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+.plan-delay-1 {
+  animation-delay: 0.1s;
+}
+
+.plan-delay-2 {
+  animation-delay: 0.2s;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
