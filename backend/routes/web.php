@@ -29,12 +29,12 @@ Route::post('/login', function (Request $request) {
     }
 
     $request->session()->regenerate();
-    $email = $request->input('email');
+    $user = Auth::user();
 
-    return match (true) {
-        str_starts_with($email, 'admin@') => redirect('/admin'),
-        str_starts_with($email, 'manager@') => redirect('/manager'),
-        str_starts_with($email, 'cashier@') => redirect('/cashier'),
+    return match ($user?->role) {
+        'admin' => redirect('/admin'),
+        'manager' => redirect('/manager'),
+        'cashier' => redirect('/cashier'),
         default => redirect('/owner'),
     };
 })->name('login.submit');
@@ -101,10 +101,71 @@ Route::prefix('cashier')->group(function () {
 });
 
 Route::prefix('manager')->group(function () {
-    Route::get('/', fn () => view('pos.manager.dashboard'));
-    Route::get('/inventory', fn () => view('pos.manager.inventory'));
-    Route::get('/reports', fn () => view('pos.manager.reports'));
-    Route::get('/customers', fn () => view('pos.manager.customers'));
+    Route::get('/', function () {
+        $owner = DB::table('owner_companies')->first();
+        $ownerId = $owner?->owner_user_id;
+        $sales = DB::table('owner_sales')->where('owner_user_id', $ownerId)->orderByDesc('sold_at')->get();
+
+        return view('pos.manager.dashboard', [
+            'company' => $owner,
+            'stats' => [
+                'salesToday' => DB::table('owner_sales')->where('owner_user_id', $ownerId)->whereDate('sold_at', today())->sum('total'),
+                'productsCount' => DB::table('owner_products')->where('owner_user_id', $ownerId)->count(),
+                'lowStockItems' => DB::table('owner_products')->where('owner_user_id', $ownerId)->whereColumn('stock', '<=', 'low_stock_threshold')->count(),
+                'ordersToday' => DB::table('owner_sales')->where('owner_user_id', $ownerId)->whereDate('sold_at', today())->count(),
+            ],
+            'salesSeries' => collect(range(6, 0))->map(function ($daysAgo) use ($sales) {
+                $date = now()->subDays($daysAgo)->toDateString();
+                return $sales->filter(fn ($sale) => \Illuminate\Support\Carbon::parse($sale->sold_at)->toDateString() === $date)->sum('total');
+            }),
+            'lowStockItems' => DB::table('owner_products')->where('owner_user_id', $ownerId)->whereColumn('stock', '<=', 'low_stock_threshold')->orderBy('stock')->limit(4)->get(),
+            'recentSales' => $sales->take(3),
+        ]);
+    });
+    Route::get('/inventory', function () {
+        $owner = DB::table('owner_companies')->first();
+        $ownerId = $owner?->owner_user_id;
+        $products = DB::table('owner_products')->where('owner_user_id', $ownerId)->orderBy('name')->get();
+
+        return view('pos.manager.inventory', [
+            'company' => $owner,
+            'products' => $products,
+            'suppliers' => DB::table('owner_products')
+                ->where('owner_user_id', $ownerId)
+                ->select('supplier')
+                ->whereNotNull('supplier')
+                ->distinct()
+                ->orderBy('supplier')
+                ->pluck('supplier')
+                ->values(),
+        ]);
+    });
+    Route::get('/reports', function () {
+        $owner = DB::table('owner_companies')->first();
+        $ownerId = $owner?->owner_user_id;
+        $sales = DB::table('owner_sales')->where('owner_user_id', $ownerId)->orderByDesc('sold_at')->get();
+
+        return view('pos.manager.reports', [
+            'company' => $owner,
+            'weeklyRevenue' => $sales->sum('total'),
+            'avgDailySales' => $sales->count() ? $sales->avg('total') : 0,
+            'itemsSold' => $sales->sum('items_count'),
+            'salesSeries' => collect(range(6, 0))->map(function ($daysAgo) use ($sales) {
+                $date = now()->subDays($daysAgo)->toDateString();
+                return $sales->filter(fn ($sale) => \Illuminate\Support\Carbon::parse($sale->sold_at)->toDateString() === $date)->sum('total');
+            }),
+            'topProducts' => DB::table('owner_products')->where('owner_user_id', $ownerId)->orderByDesc('stock')->limit(5)->get(),
+        ]);
+    });
+    Route::get('/customers', function () {
+        $owner = DB::table('owner_companies')->first();
+        $ownerId = $owner?->owner_user_id;
+
+        return view('pos.manager.customers', [
+            'company' => $owner,
+            'customers' => DB::table('owner_customers')->where('owner_user_id', $ownerId)->orderBy('name')->get(),
+        ]);
+    });
 });
 
 Route::prefix('admin')->group(function () {

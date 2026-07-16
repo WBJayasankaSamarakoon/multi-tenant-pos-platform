@@ -10,29 +10,14 @@
         ['label' => 'Reports', 'path' => '/manager/reports', 'icon' => 'R', 'match' => 'manager/reports*'],
         ['label' => 'Customers', 'path' => '/manager/customers', 'icon' => 'C', 'match' => 'manager/customers*'],
     ];
-    $products = [
-        ['Basmati Rice 5kg', 'Groceries', 1850, 3, 'Lanka Rice Mills'],
-        ['Coconut Oil 750ml', 'Cooking', 890, 5, 'Ceylon Oils Ltd'],
-        ['Sugar 1kg', 'Groceries', 320, 8, 'Lanka Sugar Co'],
-        ['Dhal 500g', 'Groceries', 480, 2, 'Import Foods Ltd'],
-        ['Milk Powder 400g', 'Dairy', 1250, 25, 'Highland Dairy'],
-        ['Tea 200g', 'Beverages', 650, 42, 'Dilmah Tea'],
-        ['Wheat Flour 1kg', 'Groceries', 280, 35, 'Prima Mills'],
-        ['Canned Fish 425g', 'Canned', 520, 18, 'Ocean Foods'],
-    ];
-    $suppliers = [
-        ['Lanka Rice Mills', '+94 11 234 5678', 'info@lankarice.lk', 12],
-        ['Ceylon Oils Ltd', '+94 11 345 6789', 'sales@ceylonoils.lk', 5],
-        ['Import Foods Ltd', '+94 11 456 7890', 'orders@importfoods.lk', 18],
-        ['Highland Dairy', '+94 11 567 8901', 'supply@highland.lk', 8],
-    ];
+    $suppliers = collect($suppliers ?? [])->map(fn ($supplier) => (object) ['name' => $supplier])->values();
 @endphp
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
         'menuItems' => $menuItems,
-        'userName' => 'Saman Kumara',
+        'userName' => auth()->user()?->name ?? 'Manager',
         'userRole' => 'Manager',
-        'companyName' => 'Perera Grocery',
+        'companyName' => $company->name ?? 'Business',
     ])
 
     <main class="flex-1 min-w-0">
@@ -73,11 +58,11 @@
                             <tbody class="divide-y divide-gray-50">
                                 @foreach ($products as $product)
                                     <tr class="hover:bg-gray-50/50">
-                                        <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $product[0] }}</td>
-                                        <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{{ $product[1] }}</span></td>
-                                        <td class="px-4 py-3 text-sm font-medium">LKR {{ number_format($product[2]) }}</td>
-                                        <td class="px-4 py-3 text-sm font-semibold {{ $product[3] <= 10 ? 'text-red-600' : 'text-gray-900' }}">{{ $product[3] }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $product[4] }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $product->name }}</td>
+                                        <td class="px-4 py-3"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{{ $product->category }}</span></td>
+                                        <td class="px-4 py-3 text-sm font-medium">LKR {{ number_format($product->price) }}</td>
+                                        <td class="px-4 py-3 text-sm font-semibold {{ $product->stock <= 10 ? 'text-red-600' : 'text-gray-900' }}">{{ $product->stock }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $product->supplier ?? '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -103,11 +88,14 @@
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 @foreach ($suppliers as $supplier)
+                                    @php
+                                        $supplierName = is_object($supplier) ? ($supplier->supplier ?? $supplier->name ?? '') : $supplier;
+                                    @endphp
                                     <tr class="hover:bg-gray-50/50">
-                                        <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $supplier[0] }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $supplier[1] }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $supplier[2] }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $supplier[3] }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $supplierName }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700">-</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700">-</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $products->where('supplier', $supplierName)->count() }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
