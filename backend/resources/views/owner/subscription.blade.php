@@ -9,18 +9,17 @@
         </p>
     </div>
 
-    {{-- Current Plan --}}
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-lg font-bold text-gray-900">Pro Plan</h3>
+                    <h3 class="text-lg font-bold text-gray-900">{{ $subscription->plan ?? 'Pro Plan' }}</h3>
                     <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                        Active
+                        {{ $subscription->status ?? 'Active' }}
                     </span>
                 </div>
                 <p class="text-sm text-gray-500">
-                    LKR 5,000/month · Renews on April 15, 2026
+                    LKR {{ number_format($subscription->price ?? 0, 0) }}/month · Renews on {{ \Illuminate\Support\Carbon::parse($subscription->renews_at ?? now())->toFormattedDateString() }}
                 </p>
             </div>
             <div class="flex gap-2">
@@ -34,13 +33,12 @@
         </div>
     </div>
 
-    {{-- Usage Stats --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <p class="text-sm text-gray-500 mb-2">Users</p>
             <div class="flex items-end justify-between">
                 <p class="text-2xl font-bold text-gray-900">
-                    5 <span class="text-sm font-normal text-gray-400">/ 5</span>
+                    {{ $subscription->user_limit ?? 0 }} <span class="text-sm font-normal text-gray-400">/ {{ $subscription->user_limit ?? 0 }}</span>
                 </p>
             </div>
             <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
@@ -51,23 +49,22 @@
             <p class="text-sm text-gray-500 mb-2">Products</p>
             <div class="flex items-end justify-between">
                 <p class="text-2xl font-bold text-gray-900">
-                    342 <span class="text-sm font-normal text-gray-400">/ 1,000</span>
+                    {{ $subscription->product_limit ?? 0 }} <span class="text-sm font-normal text-gray-400">/ {{ $subscription->product_limit ?? 0 }}</span>
                 </p>
             </div>
             <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
-                <div class="bg-emerald-500 h-2 rounded-full" style="width: 34.2%;"></div>
+                <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%;"></div>
             </div>
         </div>
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <p class="text-sm text-gray-500 mb-2">Monthly Transactions</p>
             <div class="flex items-end justify-between">
-                <p class="text-2xl font-bold text-gray-900">1,247</p>
+                <p class="text-2xl font-bold text-gray-900">{{ $subscription->transaction_limit ?? 'Unlimited' }}</p>
             </div>
-            <p class="text-xs text-gray-400 mt-2">Unlimited on Pro plan</p>
+            <p class="text-xs text-gray-400 mt-2">Unlimited on {{ $subscription->plan ?? 'current' }} plan</p>
         </div>
     </div>
 
-    {{-- Upgrade Options --}}
     <div class="bg-gradient-to-r from-gray-900 to-slate-800 rounded-xl p-6 mb-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -75,9 +72,7 @@
                     <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                     </svg>
-                    <h3 class="text-lg font-bold text-white">
-                        Upgrade to Enterprise
-                    </h3>
+                    <h3 class="text-lg font-bold text-white">Upgrade to Enterprise</h3>
                 </div>
                 <p class="text-sm text-slate-300">
                     Unlimited users, products, and priority support for LKR 10,000/mo
@@ -89,7 +84,6 @@
         </div>
     </div>
 
-    {{-- Billing History --}}
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
         <div class="p-5 border-b border-gray-100">
             <h3 class="font-semibold text-gray-900 flex items-center gap-2">
@@ -100,51 +94,25 @@
             </h3>
         </div>
         <div class="divide-y divide-gray-50">
-            <div class="flex items-center justify-between p-5">
-                <div class="flex items-center gap-3">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">March 2026</p>
-                        <p class="text-xs text-gray-500">Pro Plan - Monthly</p>
+            @forelse($billingHistory ?? [] as $payment)
+                <div class="flex items-center justify-between p-5">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{ \Illuminate\Support\Carbon::parse($payment->period)->format('F Y') }}</p>
+                            <p class="text-xs text-gray-500">{{ $subscription->plan ?? 'Plan' }} - Monthly</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-gray-900">LKR {{ number_format($payment->amount, 0) }}</p>
+                        <span class="text-xs text-emerald-600 font-medium">{{ $payment->status }}</span>
                     </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-sm font-semibold text-gray-900">LKR 5,000</p>
-                    <span class="text-xs text-emerald-600 font-medium">Paid</span>
-                </div>
-            </div>
-            <div class="flex items-center justify-between p-5">
-                <div class="flex items-center gap-3">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">February 2026</p>
-                        <p class="text-xs text-gray-500">Pro Plan - Monthly</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm font-semibold text-gray-900">LKR 5,000</p>
-                    <span class="text-xs text-emerald-600 font-medium">Paid</span>
-                </div>
-            </div>
-            <div class="flex items-center justify-between p-5">
-                <div class="flex items-center gap-3">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">January 2026</p>
-                        <p class="text-xs text-gray-500">Pro Plan - Monthly</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-sm font-semibold text-gray-900">LKR 5,000</p>
-                    <span class="text-xs text-emerald-600 font-medium">Paid</span>
-                </div>
-            </div>
+            @empty
+                <div class="p-5 text-sm text-gray-500">No payment history yet.</div>
+            @endforelse
         </div>
     </div>
 </div>

@@ -13,41 +13,48 @@
         ['label' => 'Settings', 'path' => '/owner/settings', 'icon' => 'S', 'match' => 'owner/settings*'],
         ['label' => 'Subscription', 'path' => '/owner/subscription', 'icon' => '$', 'match' => 'owner/subscription*'],
     ];
+    $weeklySales = collect(range(6, 0))->map(function ($daysAgo) use ($transactions) {
+        $date = now()->subDays($daysAgo)->toDateString();
+
+        return $transactions->filter(function ($tx) use ($date) {
+            return \Illuminate\Support\Carbon::parse($tx->sold_at)->toDateString() === $date;
+        })->sum('total');
+    });
 @endphp
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
         'menuItems' => $menuItems,
-        'userName' => 'Nimal Perera',
+        'userName' => auth()->user()?->name ?? 'Owner',
         'userRole' => 'Business Owner',
-        'companyName' => 'Perera Grocery',
+        'companyName' => $company->name ?? 'Business',
     ])
 
     <main class="flex-1 min-w-0">
         <div class="p-4 sm:p-6 lg:p-8">
             <div class="mb-6">
                 <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <p class="text-sm text-gray-500 mt-1">Welcome back, Nimal. Here's your business overview.</p>
+                    <p class="text-sm text-gray-500 mt-1">Welcome back, {{ auth()->user()?->name ?? 'Owner' }}. Here's your business overview.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm font-medium text-gray-500">Today's Sales</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 45,280</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($stats['salesToday']) }}</p>
                     <p class="text-xs text-emerald-600 mt-2">Up 12.5% vs last month</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm font-medium text-gray-500">Monthly Revenue</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 1.24M</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($stats['monthlyRevenue']) }}</p>
                     <p class="text-xs text-blue-600 mt-2">Up 8.3% vs last month</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm font-medium text-gray-500">Total Products</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">342</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['productsCount'] }}</p>
                     <p class="text-xs text-purple-600 mt-2">Up 2.1% vs last month</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm font-medium text-gray-500">Active Employees</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">8</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['employeesCount'] }}</p>
                 </div>
             </div>
 
@@ -63,7 +70,7 @@
                         </a>
                     </div>
                     <div class="h-64 flex items-end gap-3">
-                        @foreach ([32500, 28400, 45200, 38900, 52100, 61800, 41300] as $value)
+                        @foreach ($weeklySales as $value)
                             @php $height = max(20, round($value / 700)); @endphp
                             <div class="flex-1 bg-blue-500/80 rounded-t" style="height: {{ $height }}px"></div>
                         @endforeach
@@ -76,18 +83,13 @@
                         <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">4 items</span>
                     </div>
                     <div class="space-y-3">
-                        @foreach ([
-                            ['Basmati Rice 5kg', 3, 10],
-                            ['Coconut Oil 750ml', 5, 15],
-                            ['Sugar 1kg', 8, 20],
-                            ['Dhal 500g', 2, 10],
-                        ] as $item)
+                        @foreach ($lowStockItems as $item)
                             <div class="flex items-center justify-between p-3 rounded-lg bg-amber-50/50 border border-amber-100/50">
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">{{ $item[0] }}</p>
-                                    <p class="text-xs text-gray-500">Threshold: {{ $item[2] }}</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ $item->name }}</p>
+                                    <p class="text-xs text-gray-500">Threshold: {{ $item->low_stock_threshold }}</p>
                                 </div>
-                                <span class="text-sm font-bold text-amber-600">{{ $item[1] }} left</span>
+                                <span class="text-sm font-bold text-amber-600">{{ $item->stock }} left</span>
                             </div>
                         @endforeach
                     </div>
@@ -116,21 +118,15 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
-                            @foreach ([
-                                ['INV-1024', 'Kamal Jayasinghe', 'LKR 3,450', 'Cash', '2 min ago'],
-                                ['INV-1023', 'Dilani Wickrama', 'LKR 12,800', 'Card', '15 min ago'],
-                                ['INV-1022', 'Sunil Bandara', 'LKR 890', 'Cash', '32 min ago'],
-                                ['INV-1021', 'Priya Mendis', 'LKR 5,670', 'Mobile', '1 hr ago'],
-                                ['INV-1020', 'Ranjith De Silva', 'LKR 2,340', 'Cash', '1.5 hr ago'],
-                            ] as $tx)
+                            @foreach ($transactions as $tx)
                                 <tr class="hover:bg-gray-50/50">
-                                    <td class="px-5 py-3 text-sm font-medium text-blue-600">{{ $tx[0] }}</td>
-                                    <td class="px-5 py-3 text-sm text-gray-700">{{ $tx[1] }}</td>
-                                    <td class="px-5 py-3 text-sm font-semibold text-gray-900">{{ $tx[2] }}</td>
+                                    <td class="px-5 py-3 text-sm font-medium text-blue-600">{{ $tx->invoice_number }}</td>
+                                    <td class="px-5 py-3 text-sm text-gray-700">{{ $tx->customer_name }}</td>
+                                    <td class="px-5 py-3 text-sm font-semibold text-gray-900">LKR {{ number_format($tx->total) }}</td>
                                     <td class="px-5 py-3">
-                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $tx[3] === 'Cash' ? 'bg-emerald-50 text-emerald-700' : ($tx[3] === 'Card' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700') }}">{{ $tx[3] }}</span>
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $tx->payment_method === 'Cash' ? 'bg-emerald-50 text-emerald-700' : ($tx->payment_method === 'Card' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700') }}">{{ $tx->payment_method }}</span>
                                     </td>
-                                    <td class="px-5 py-3 text-sm text-gray-400">{{ $tx[4] }}</td>
+                                    <td class="px-5 py-3 text-sm text-gray-400">{{ \Illuminate\Support\Carbon::parse($tx->sold_at)->diffForHumans() }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

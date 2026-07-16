@@ -13,13 +13,23 @@
         ['label' => 'Settings', 'path' => '/owner/settings', 'icon' => 'S', 'match' => 'owner/settings*'],
         ['label' => 'Subscription', 'path' => '/owner/subscription', 'icon' => '$', 'match' => 'owner/subscription*'],
     ];
+    $salesStats = $salesStats ?? ['today' => 45280, 'count' => 24, 'average' => 1887];
+    $salesRecords = $salesRecords ?? [
+        (object) ['invoice_number' => 'INV-1024', 'sold_at' => '2026-03-14', 'customer_name' => 'Kamal Jayasinghe', 'items_count' => 5, 'total' => 3450, 'payment_method' => 'Cash', 'status' => 'Completed'],
+        (object) ['invoice_number' => 'INV-1023', 'sold_at' => '2026-03-14', 'customer_name' => 'Dilani Wickrama', 'items_count' => 12, 'total' => 12800, 'payment_method' => 'Card', 'status' => 'Completed'],
+        (object) ['invoice_number' => 'INV-1022', 'sold_at' => '2026-03-14', 'customer_name' => 'Sunil Bandara', 'items_count' => 2, 'total' => 890, 'payment_method' => 'Cash', 'status' => 'Completed'],
+        (object) ['invoice_number' => 'INV-1021', 'sold_at' => '2026-03-14', 'customer_name' => 'Priya Mendis', 'items_count' => 8, 'total' => 5670, 'payment_method' => 'Mobile', 'status' => 'Completed'],
+        (object) ['invoice_number' => 'INV-1020', 'sold_at' => '2026-03-13', 'customer_name' => 'Ranjith De Silva', 'items_count' => 3, 'total' => 2340, 'payment_method' => 'Cash', 'status' => 'Completed'],
+        (object) ['invoice_number' => 'INV-1019', 'sold_at' => '2026-03-13', 'customer_name' => 'Anoma Perera', 'items_count' => 6, 'total' => 7890, 'payment_method' => 'Card', 'status' => 'Completed'],
+        (object) ['invoice_number' => 'INV-1018', 'sold_at' => '2026-03-13', 'customer_name' => 'Chaminda Ratnayake', 'items_count' => 1, 'total' => 450, 'payment_method' => 'Cash', 'status' => 'Refunded'],
+    ];
 @endphp
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
         'menuItems' => $menuItems,
-        'userName' => 'Nimal Perera',
+        'userName' => auth()->user()?->name ?? 'Owner',
         'userRole' => 'Business Owner',
-        'companyName' => 'Perera Grocery',
+        'companyName' => $company->name ?? 'Business',
     ])
 
     <main class="flex-1 min-w-0">
@@ -38,17 +48,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm text-gray-500">Today's Sales</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 45,280</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($salesStats['today']) }}</p>
                     <p class="text-xs text-emerald-600 mt-2">Up 12.5% vs last month</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm text-gray-500">Total Invoices</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">24</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $salesStats['count'] }}</p>
                     <p class="text-xs text-blue-600 mt-2">Up 5.2% vs last month</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm text-gray-500">Avg. Transaction</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 1,887</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($salesStats['average']) }}</p>
                     <p class="text-xs text-purple-600 mt-2">Up 3.1% vs last month</p>
                 </div>
             </div>
@@ -111,26 +121,18 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
-                            @foreach ([
-                                ['INV-1024', '2026-03-14', 'Kamal Jayasinghe', 5, 3450, 'Cash', 'Completed'],
-                                ['INV-1023', '2026-03-14', 'Dilani Wickrama', 12, 12800, 'Card', 'Completed'],
-                                ['INV-1022', '2026-03-14', 'Sunil Bandara', 2, 890, 'Cash', 'Completed'],
-                                ['INV-1021', '2026-03-14', 'Priya Mendis', 8, 5670, 'Mobile', 'Completed'],
-                                ['INV-1020', '2026-03-13', 'Ranjith De Silva', 3, 2340, 'Cash', 'Completed'],
-                                ['INV-1019', '2026-03-13', 'Anoma Perera', 6, 7890, 'Card', 'Completed'],
-                                ['INV-1018', '2026-03-13', 'Chaminda Ratnayake', 1, 450, 'Cash', 'Refunded'],
-                            ] as $row)
+                            @foreach ($salesRecords as $row)
                                 <tr class="hover:bg-gray-50/50">
-                                    <td class="px-4 py-3 text-sm font-medium text-blue-600">{{ $row[0] }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row[1] }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row[2] }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row[3] }}</td>
-                                    <td class="px-4 py-3 text-sm font-semibold">LKR {{ number_format($row[4]) }}</td>
+                                    <td class="px-4 py-3 text-sm font-medium text-blue-600">{{ $row->invoice_number }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row->sold_at }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row->customer_name }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row->items_count }}</td>
+                                    <td class="px-4 py-3 text-sm font-semibold">LKR {{ number_format($row->total) }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $row[5] === 'Cash' ? 'bg-emerald-50 text-emerald-700' : ($row[5] === 'Card' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700') }}">{{ $row[5] }}</span>
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $row->payment_method === 'Cash' ? 'bg-emerald-50 text-emerald-700' : ($row->payment_method === 'Card' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700') }}">{{ $row->payment_method }}</span>
                                     </td>
                                     <td class="px-4 py-3">
-                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $row[6] === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' }}">{{ $row[6] }}</span>
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $row->status === 'Completed' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700' }}">{{ $row->status }}</span>
                                     </td>
                                 </tr>
                             @endforeach
