@@ -14,9 +14,9 @@
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
         'menuItems' => $menuItems,
-        'userName' => 'Saman Kumara',
+        'userName' => auth()->user()?->name ?? 'Manager',
         'userRole' => 'Manager',
-        'companyName' => 'Perera Grocery',
+        'companyName' => $company->name ?? 'Business',
     ])
 
     <main class="flex-1 min-w-0">
@@ -34,17 +34,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm text-gray-500">Weekly Revenue</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 343,580</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($weeklyRevenue) }}</p>
                     <p class="text-xs text-emerald-600 mt-2">Up 8.3% vs last week</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm text-gray-500">Avg. Daily Sales</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 49,083</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($avgDailySales) }}</p>
                     <p class="text-xs text-blue-600 mt-2">Up 5.1% vs last week</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
                     <p class="text-sm text-gray-500">Items Sold</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">487</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $itemsSold }}</p>
                     <p class="text-xs text-purple-600 mt-2">Up 12.0% vs last week</p>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <h3 class="font-semibold text-gray-900 mb-4">Daily Sales Summary</h3>
                     <div class="h-64 flex items-end gap-3">
-                        @foreach ([42500, 38200, 51800, 45300, 62100, 58400, 45280] as $value)
+                        @foreach ($salesSeries as $value)
                             @php $height = max(20, round($value / 700)); @endphp
                             <div class="flex-1 bg-blue-500/80 rounded-t" style="height: {{ $height }}px"></div>
                         @endforeach
@@ -63,20 +63,14 @@
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <h3 class="font-semibold text-gray-900 mb-4">Top Selling Products</h3>
                     <div class="space-y-4">
-                        @foreach ([
-                            ['Basmati Rice 5kg', 85200, 'bg-blue-500'],
-                            ['Milk Powder 400g', 62500, 'bg-emerald-500'],
-                            ['Coconut Oil 750ml', 44500, 'bg-amber-500'],
-                            ['Tea 200g', 32500, 'bg-purple-500'],
-                            ['Sugar 1kg', 28000, 'bg-red-500'],
-                        ] as $item)
+                        @foreach ($topProducts as $item)
                             <div>
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700">{{ $item[0] }}</span>
-                                    <span class="font-semibold">LKR {{ number_format($item[1]) }}</span>
+                                    <span class="text-gray-700">{{ $item->name }}</span>
+                                    <span class="font-semibold">LKR {{ number_format($item->price) }}</span>
                                 </div>
                                 <div class="mt-2 w-full bg-gray-100 rounded-full h-2">
-                                    <div class="{{ $item[2] }} h-2 rounded-full" style="width: {{ min(100, round($item[1] / 1000)) }}%"></div>
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: {{ min(100, round($item->price / 1000)) }}%"></div>
                                 </div>
                             </div>
                         @endforeach
