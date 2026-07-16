@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 Route::view('/', 'welcome')->name('home');
 Route::view('/pricing', 'public.pricing')->name('pricing');
@@ -77,8 +78,26 @@ Route::prefix('owner')->controller(OwnerController::class)->group(function () {
 });
 
 Route::prefix('cashier')->group(function () {
-    Route::get('/', fn () => view('pos.cashier.pos'));
-    Route::get('/history', fn () => view('pos.cashier.history'));
+    Route::get('/', function () {
+        return view('pos.cashier.pos', [
+            'company' => DB::table('owner_companies')->first(),
+            'products' => DB::table('owner_products')->orderBy('name')->get(),
+            'customers' => DB::table('owner_customers')->orderBy('name')->get(),
+        ]);
+    });
+    Route::get('/history', function () {
+        $sales = DB::table('owner_sales')->orderByDesc('sold_at')->get();
+
+        return view('pos.cashier.history', [
+            'company' => DB::table('owner_companies')->first(),
+            'sales' => $sales,
+            'salesStats' => [
+                'totalSales' => $sales->sum('total'),
+                'count' => $sales->count(),
+                'average' => $sales->avg('total') ?? 0,
+            ],
+        ]);
+    });
 });
 
 Route::prefix('manager')->group(function () {
