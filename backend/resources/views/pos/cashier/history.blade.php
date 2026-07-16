@@ -8,23 +8,13 @@
         ['label' => 'POS Terminal', 'path' => '/cashier', 'icon' => 'P', 'match' => 'cashier'],
         ['label' => 'Sales History', 'path' => '/cashier/history', 'icon' => 'H', 'match' => 'cashier/history*'],
     ];
-    $sales = [
-        ['INV-1024', '14:32', 'Kamal Jayasinghe', 5, 3450, 'Cash'],
-        ['INV-1023', '14:15', 'Dilani Wickrama', 12, 12800, 'Card'],
-        ['INV-1022', '13:48', 'Walk-in Customer', 2, 890, 'Cash'],
-        ['INV-1021', '13:20', 'Priya Mendis', 8, 5670, 'Mobile'],
-        ['INV-1020', '12:45', 'Walk-in Customer', 3, 2340, 'Cash'],
-        ['INV-1019', '11:30', 'Anoma Perera', 6, 7890, 'Card'],
-        ['INV-1018', '10:15', 'Walk-in Customer', 1, 450, 'Cash'],
-        ['INV-1017', '09:45', 'Lakshmi Fernando', 15, 18500, 'Card'],
-    ];
 @endphp
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
         'menuItems' => $menuItems,
-        'userName' => 'Kamala Dissanayake',
+        'userName' => auth()->user()?->name ?? 'Cashier',
         'userRole' => 'Cashier',
-        'companyName' => 'Perera Grocery',
+        'companyName' => $company->name ?? 'Business',
     ])
 
     <main class="flex-1 min-w-0">
@@ -37,15 +27,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <p class="text-sm text-gray-500">Total Sales</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 51,990</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($salesStats['totalSales']) }}</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <p class="text-sm text-gray-500">Transactions</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">8</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">{{ $salesStats['count'] }}</p>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <p class="text-sm text-gray-500">Average Sale</p>
-                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR 6,499</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-1">LKR {{ number_format($salesStats['average']) }}</p>
                 </div>
             </div>
 
@@ -70,13 +60,13 @@
                         <tbody class="divide-y divide-gray-50">
                             @foreach ($sales as $row)
                                 <tr class="hover:bg-gray-50/50">
-                                    <td class="px-4 py-3 text-sm font-medium text-blue-600">{{ $row[0] }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row[1] }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row[2] }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row[3] }}</td>
-                                    <td class="px-4 py-3 text-sm font-semibold">LKR {{ number_format($row[4]) }}</td>
+                                    <td class="px-4 py-3 text-sm font-medium text-blue-600">{{ $row->invoice_number }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ \Illuminate\Support\Carbon::parse($row->sold_at)->format('H:i') }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row->customer_name ?? 'Walk-in Customer' }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $row->items_count }}</td>
+                                    <td class="px-4 py-3 text-sm font-semibold">LKR {{ number_format($row->total) }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $row[5] === 'Cash' ? 'bg-emerald-50 text-emerald-700' : ($row[5] === 'Card' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700') }}">{{ $row[5] }}</span>
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $row->payment_method === 'Cash' ? 'bg-emerald-50 text-emerald-700' : ($row->payment_method === 'Card' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700') }}">{{ $row->payment_method }}</span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -84,7 +74,7 @@
                     </table>
                 </div>
                 <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-                    <p class="text-xs text-gray-500">Showing 1-8 of 8</p>
+                    <p class="text-xs text-gray-500">Showing {{ $sales->count() }} of {{ $sales->count() }}</p>
                     <div class="flex items-center gap-1">
                         <button class="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" disabled>Prev</button>
                         <span class="text-xs font-medium text-gray-600 px-2">1 / 1</span>
