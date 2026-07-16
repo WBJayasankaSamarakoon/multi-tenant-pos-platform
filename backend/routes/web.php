@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Http\Controllers\OwnerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -55,14 +56,24 @@ Route::post('/register', function (Request $request) {
     return redirect('/login')->with('status', 'Registration complete. Please sign in.');
 });
 
-Route::prefix('owner')->group(function () {
-    Route::get('/', fn () => view('pos.owner.dashboard'));
-    Route::get('/sales', fn () => view('pos.owner.sales'));
-    Route::get('/inventory', fn () => view('pos.owner.inventory'));
-    Route::get('/employees', fn () => view('pos.owner.employees'));
-    Route::get('/customers', fn () => view('pos.owner.customers'));
-    Route::get('/settings', fn () => view('pos.owner.settings'));
-    Route::get('/subscription', fn () => view('pos.owner.subscription'));
+Route::prefix('owner')->controller(OwnerController::class)->group(function () {
+    Route::get('/', 'dashboard');
+    Route::get('/sales', 'sales');
+    Route::get('/inventory', 'inventory');
+    Route::post('/inventory', 'storeProduct');
+    Route::put('/inventory/{productId}', 'updateProduct');
+    Route::delete('/inventory/{productId}', 'deleteProduct');
+    Route::get('/employees', 'employees');
+    Route::post('/employees', 'storeEmployee');
+    Route::put('/employees/{employeeId}', 'updateEmployee');
+    Route::delete('/employees/{employeeId}', 'deleteEmployee');
+    Route::get('/customers', 'customers');
+    Route::post('/customers', 'storeCustomer');
+    Route::put('/customers/{customerId}', 'updateCustomer');
+    Route::delete('/customers/{customerId}', 'deleteCustomer');
+    Route::get('/settings', 'settings');
+    Route::post('/settings', 'updateSettings');
+    Route::get('/subscription', 'subscription');
 });
 
 Route::prefix('cashier')->group(function () {

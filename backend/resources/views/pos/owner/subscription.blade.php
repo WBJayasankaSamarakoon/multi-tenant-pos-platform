@@ -17,9 +17,9 @@
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
         'menuItems' => $menuItems,
-        'userName' => 'Nimal Perera',
+        'userName' => auth()->user()?->name ?? 'Owner',
         'userRole' => 'Business Owner',
-        'companyName' => 'Perera Grocery',
+        'companyName' => $company->name ?? 'Business',
     ])
 
     <main class="flex-1 min-w-0">
@@ -33,10 +33,10 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
-                            <h3 class="text-lg font-bold text-gray-900">Pro Plan</h3>
-                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">Active</span>
+                            <h3 class="text-lg font-bold text-gray-900">{{ $subscription->plan }}</h3>
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">{{ $subscription->status }}</span>
                         </div>
-                        <p class="text-sm text-gray-500">LKR 5,000/month · Renews on April 15, 2026</p>
+                        <p class="text-sm text-gray-500">LKR {{ number_format($subscription->price) }}/month · Renews on {{ $subscription->renews_at }}</p>
                     </div>
                     <div class="flex gap-2">
                         <button class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Change Plan</button>
@@ -49,27 +49,27 @@
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <p class="text-sm text-gray-500 mb-2">Users</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">5 <span class="text-sm font-normal text-gray-400">/ 5</span></p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $subscription->user_limit }} <span class="text-sm font-normal text-gray-400">/ {{ $subscription->user_limit }}</span></p>
                     </div>
                     <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-blue-600 h-2 rounded-full" style="width: 100%"></div>
+                        <div class="bg-blue-600 h-2 rounded-full" style="width: 100%;"></div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <p class="text-sm text-gray-500 mb-2">Products</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">342 <span class="text-sm font-normal text-gray-400">/ 1,000</span></p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $subscription->product_limit }} <span class="text-sm font-normal text-gray-400">/ {{ $subscription->product_limit }}</span></p>
                     </div>
                     <div class="mt-3 w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-emerald-500 h-2 rounded-full" style="width: 34.2%"></div>
+                        <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%;"></div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
                     <p class="text-sm text-gray-500 mb-2">Monthly Transactions</p>
                     <div class="flex items-end justify-between">
-                        <p class="text-2xl font-bold text-gray-900">1,247</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $subscription->transaction_limit }}</p>
                     </div>
-                    <p class="text-xs text-gray-400 mt-2">Unlimited on Pro plan</p>
+                    <p class="text-xs text-gray-400 mt-2">Unlimited on {{ $subscription->plan }} plan</p>
                 </div>
             </div>
 
@@ -93,19 +93,15 @@
                     <h3 class="font-semibold text-gray-900">Billing History</h3>
                 </div>
                 <div class="divide-y divide-gray-50">
-                    @foreach ([
-                        ['March 2026', 'Pro Plan - Monthly', 'LKR 5,000', 'Paid'],
-                        ['February 2026', 'Pro Plan - Monthly', 'LKR 5,000', 'Paid'],
-                        ['January 2026', 'Pro Plan - Monthly', 'LKR 5,000', 'Paid'],
-                    ] as $bill)
+                    @foreach ($billingHistory as $bill)
                         <div class="flex items-center justify-between p-5">
                             <div>
-                                <p class="text-sm font-medium text-gray-900">{{ $bill[0] }}</p>
-                                <p class="text-xs text-gray-500">{{ $bill[1] }}</p>
+                                <p class="text-sm font-medium text-gray-900">{{ $bill->period }}</p>
+                                <p class="text-xs text-gray-500">{{ $subscription->plan }} - Monthly</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-sm font-semibold text-gray-900">{{ $bill[2] }}</p>
-                                <span class="text-xs text-emerald-600 font-medium">{{ $bill[3] }}</span>
+                                <p class="text-sm font-semibold text-gray-900">LKR {{ number_format($bill->amount) }}</p>
+                                <span class="text-xs text-emerald-600 font-medium">{{ $bill->status }}</span>
                             </div>
                         </div>
                     @endforeach
