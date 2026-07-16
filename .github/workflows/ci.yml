@@ -16,12 +16,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.3"
+        uses: shivammathur/setup-php
 
       - name: Copy .env
         run: cp .env.example .env
@@ -45,9 +43,7 @@ jobs:
         run: php artisan optimize:clear
 
       - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
+        uses: actions/setup-node
 
       - name: Install Frontend
         working-directory: frontend
