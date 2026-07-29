@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
-Route::view('/', 'welcome')->name('home');
-Route::view('/pricing', 'public.pricing')->name('pricing');
-Route::get('/features', fn () => redirect('/#features'));
-Route::get('/about', fn () => redirect('/#about'));
+// Route::view('/', 'welcome')->name('home');
+// Route::view('/pricing', 'public.pricing')->name('pricing');
+// Route::get('/features', fn () => redirect('/#features'));
+// Route::get('/about', fn () => redirect('/#about'));
 
 Route::view('/login', 'public.login')->name('login');
 Route::view('/register', 'public.register')->name('register');
