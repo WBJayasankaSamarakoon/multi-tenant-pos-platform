@@ -1,0 +1,56 @@
+<div class="w-full min-h-screen bg-white">
+  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a routerLink="/" class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">M</div>
+          <span class="text-sm font-bold text-gray-900">MultiBiz<span class="text-blue-600">POS</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a routerLink="/features" class="text-sm text-blue-600 font-semibold">Features</a>
+          <a routerLink="/pricing" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+          <a routerLink="/about" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">About</a>
+          <a href="http://localhost:8000/login" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Login</a>
+          <a [href]="backendRegisterUrl" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="py-20 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Features</span>
+        <h1 class="mt-3 text-3xl lg:text-5xl font-bold text-gray-900">Everything your business needs</h1>
+        <p class="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">From sales to inventory to reports, MultiBiz POS gives each role the tools they need.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">POS Billing System</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Fast billing, invoices, discounts, and multi-payment checkout for cashier speed.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Inventory Management</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Track stock levels in real time with low-stock alerts and product control.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Reports and Analytics</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Daily sales summaries, trend insights, and role-based dashboards.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Multi-Tenant Platform</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Each business runs in isolated data space with secure role-based access.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Subscription Plans</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Flexible plans from startup to enterprise with Sri Lankan pricing.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg transition-all">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Role-Based Workflows</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Owner, manager, cashier, and admin portals with purpose-built screens.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

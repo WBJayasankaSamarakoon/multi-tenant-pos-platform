@@ -1,0 +1,56 @@
+name: Multi-Tenant-POS-Platform CI
+
+on:
+  pull_request:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend Checks
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, dom, fileinfo, sqlite, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Prepare SQLite database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+          cp .env.example .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=database/database.sqlite" >> .env
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Composer Dump Autoload
+        run: composer dump-autoload
+
+      - name: Generate App Key
+        run: php artisan key:generate
+
+      - name: Run Migrations
+        run: php artisan migrate --force
+
+      - name: Seed Database
+        run: php artisan db:seed --force
+
+      - name: Clear Optimized Cache
+        run: php artisan optimize:clear

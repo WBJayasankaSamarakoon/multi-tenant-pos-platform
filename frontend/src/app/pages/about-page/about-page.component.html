@@ -1,0 +1,48 @@
+<div class="w-full min-h-screen bg-gray-50">
+  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a routerLink="/" class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">M</div>
+          <span class="text-sm font-bold text-gray-900">MultiBiz<span class="text-blue-600">POS</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a routerLink="/features" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Features</a>
+          <a routerLink="/pricing" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+          <a routerLink="/about" class="text-sm text-blue-600 font-semibold">About</a>
+          <a href="http://localhost:8000/login" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Login</a>
+          <a [href]="backendRegisterUrl" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="py-20 lg:py-28">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <span class="text-sm font-semibold text-blue-600 uppercase tracking-wider">About</span>
+        <h1 class="mt-3 text-3xl lg:text-5xl font-bold text-gray-900">Built for Sri Lankan SMB growth</h1>
+        <p class="mt-4 text-lg text-gray-600">MultiBiz POS helps local businesses modernize sales, inventory, and operations with one platform.</p>
+      </div>
+
+      <div class="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900">Our Mission</h2>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Deliver a practical, affordable, and fast POS platform with strong local support and LKR-friendly pricing.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900">How We Work</h2>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Marketing and product information live in Angular, while secure auth and business operations run in Laravel.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900">Designed for Roles</h2>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Owner, manager, cashier, and admin each get role-focused workflows, reports, and permissions.</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900">Cloud Advantage</h2>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">No installation, no complex setup, and access from desktop, tablet, and mobile browsers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
