@@ -499,8 +499,8 @@
                             <span class="text-sm font-semibold text-blue-600">NP</span>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-gray-900">Nimal Perera</p>
-                            <p class="text-xs text-gray-500">Perera Grocery, Colombo</p>
+                            <p class="text-sm font-semibold text-gray-900">Retail Owner</p>
+                            <p class="text-xs text-gray-500">Independent Grocery, Colombo</p>
                         </div>
                     </div>
                 </div>
@@ -532,8 +532,8 @@
                             <span class="text-sm font-semibold text-emerald-600">KS</span>
                         </div>
                         <div>
-                            <p class="text-sm font-semibold text-gray-900">Kumari Silva</p>
-                            <p class="text-xs text-gray-500">Silva Electronics, Kandy</p>
+                            <p class="text-sm font-semibold text-gray-900">Store Manager</p>
+                            <p class="text-xs text-gray-500">Electronics Retail, Kandy</p>
                         </div>
                     </div>
                 </div>

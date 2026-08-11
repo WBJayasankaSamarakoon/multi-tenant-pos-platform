@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended($this->dashboardPath(Auth::user()?->email));
+        return redirect()->intended($this->dashboardPath(Auth::user()?->role));
     }
 
     public function showRegister(): View
@@ -59,15 +59,15 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->to($this->dashboardPath($user->email));
+        return redirect()->to($this->dashboardPath($user->role));
     }
 
-    private function dashboardPath(string $email): string
+    private function dashboardPath(?string $role): string
     {
-        return match ($email) {
-            'cashier@demo.lk' => '/cashier',
-            'manager@demo.lk' => '/manager',
-            'admin@demo.lk' => '/admin',
+        return match ($role) {
+            'cashier' => '/cashier',
+            'manager' => '/manager',
+            'admin' => '/admin',
             default => '/owner',
         };
     }

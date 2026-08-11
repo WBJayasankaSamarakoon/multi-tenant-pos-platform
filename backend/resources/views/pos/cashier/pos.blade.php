@@ -61,7 +61,13 @@
                 </div>
             </div>
 
-            <div class="w-full lg:w-[400px] xl:w-[440px] bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col min-h-0 max-h-[50vh] lg:max-h-none lg:h-screen">
+            <form class="w-full lg:w-[400px] xl:w-[440px] bg-white border-t lg:border-t-0 lg:border-l border-gray-200 flex flex-col min-h-0 max-h-[50vh] lg:max-h-none lg:h-screen" method="POST" action="/cashier/checkout" data-checkout-form>
+                @csrf
+                <input type="hidden" name="cart_payload" value="[]" data-cart-payload>
+                <input type="hidden" name="payment_method" value="Cash" data-payment-method-input>
+                <input type="hidden" name="discount" value="0" data-discount-value-input>
+                <input type="hidden" name="customer_name" value="Walk-in Customer" data-customer-name-input>
+
                 <div class="flex-shrink-0 px-5 py-4 border-b border-gray-100">
                     <div class="flex items-center justify-between">
                         <h2 class="font-bold text-gray-900">Current Bill</h2>
@@ -103,30 +109,34 @@
                         <button type="button" data-payment-method="Mobile" class="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-medium border transition-all bg-white border-gray-200 text-gray-500 hover:bg-gray-50">Mobile</button>
                     </div>
 
-                    <button data-modal-open="#payment-success" class="w-full py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/25 text-base">
+                    <button type="submit" class="w-full py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/25 text-base">
                         Pay <span data-pay-label>LKR 0</span>
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </main>
-</div>
 
-<div id="payment-success" data-modal class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
-        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span class="text-emerald-600 text-lg font-bold">OK</span>
+@if (session('payment_success'))
+    @php $paymentSuccess = session('payment_success'); @endphp
+    <div id="payment-success" data-modal class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 text-center shadow-2xl max-w-sm mx-4">
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="text-emerald-600 text-lg font-bold">OK</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-1">Payment Successful!</h3>
+            <p class="text-sm text-gray-500">Invoice {{ $paymentSuccess['invoice'] }} has been saved to sales history.</p>
+            <button data-modal-close="#payment-success" class="mt-6 w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 text-sm">Close</button>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-1">Payment Successful!</h3>
-        <p class="text-sm text-gray-500">Invoice has been generated and printed.</p>
-        <p class="text-lg font-bold text-emerald-600 mt-3" data-payment-total>LKR 0</p>
-        <button data-modal-close="#payment-success" class="mt-6 w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 text-sm">Close</button>
     </div>
+@endif
+
 </div>
 
 <script>
     (() => {
         const cards = Array.from(document.querySelectorAll('[data-product-card]'));
+        const checkoutForm = document.querySelector('[data-checkout-form]');
         const cartItems = document.querySelector('[data-cart-items]');
         const cartEmptyState = document.querySelector('[data-cart-empty-state]');
         const cartCount = document.querySelector('[data-cart-count]');
@@ -135,8 +145,12 @@
         const taxEl = document.querySelector('[data-tax]');
         const totalEl = document.querySelector('[data-total]');
         const payLabel = document.querySelector('[data-pay-label]');
-        const paymentTotal = document.querySelector('[data-payment-total]');
         const paymentButtons = Array.from(document.querySelectorAll('[data-payment-method]'));
+        const cartPayloadInput = document.querySelector('[data-cart-payload]');
+        const paymentMethodInput = document.querySelector('[data-payment-method-input]');
+        const discountValueInput = document.querySelector('[data-discount-value-input]');
+        const customerNameInput = document.querySelector('[data-customer-name-input]');
+        const customerSelect = document.querySelector('[data-customer-select]');
         const cart = new Map();
         let paymentMethod = 'Cash';
 
@@ -150,13 +164,20 @@
             const discountedSubtotal = subtotal * (1 - discountRate / 100);
             const tax = discountedSubtotal * 0.15;
             const total = discountedSubtotal + tax;
+            const payload = items.map((item) => ({
+                id: item.id,
+                qty: item.qty,
+            }));
 
             cartCount.textContent = `${itemCount} items`;
             subtotalEl.textContent = money(discountedSubtotal);
             taxEl.textContent = money(tax);
             totalEl.textContent = money(total);
             payLabel.textContent = money(total);
-            paymentTotal.textContent = money(total);
+            cartPayloadInput.value = JSON.stringify(payload);
+            discountValueInput.value = String(discountRate);
+            paymentMethodInput.value = paymentMethod;
+            customerNameInput.value = customerSelect?.value || 'Walk-in Customer';
 
             cartEmptyState.classList.toggle('hidden', items.length > 0);
             cartItems.classList.toggle('hidden', items.length === 0);
@@ -216,6 +237,16 @@
         });
 
         discountInput.addEventListener('input', render);
+        customerSelect.addEventListener('change', render);
+
+        checkoutForm.addEventListener('submit', (event) => {
+            if (cart.size === 0) {
+                event.preventDefault();
+                return;
+            }
+
+            render();
+        });
 
         cartItems.addEventListener('click', (event) => {
             const minusId = event.target.getAttribute('data-qty-minus');

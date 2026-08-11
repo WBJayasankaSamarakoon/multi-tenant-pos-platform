@@ -42,9 +42,9 @@
 @endphp
 @include('partials.sidebar', [
     'menuItems' => $ownerMenuItems,
-    'userName' => 'Nimal Perera',
+    'userName' => auth()->user()?->name ?? 'Owner',
     'userRole' => 'Owner',
-    'companyName' => 'Perera Grocery'
+    'companyName' => data_get($company, 'name')
 ])
 
 <div class="flex-1 min-h-screen">

@@ -1,54 +1,93 @@
 @extends('layouts.dashboard')
 
+@section('title', 'System Logs - MultiBizPOS')
+
 @section('content')
-<div>
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">System Logs</h1>
-        <p class="text-sm text-gray-500 mt-1">
-            Monitor platform activity and events
-        </p>
-    </div>
-
-    <div class="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
-        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-        </svg>
-        @foreach(['All', 'Transaction', 'Auth', 'Admin', 'Inventory', 'System', 'Settings'] as $type)
-            <button class="px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-all {{ $type === 'All' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
-                {{ $type }}
-            </button>
-        @endforeach
-    </div>
-
-    @php
-        $logs = [
-            ['id' => 1, 'timestamp' => '2026-03-14 14:32:15', 'user' => 'nimal@pereragrocery.lk', 'action' => 'Sale Completed', 'details' => 'INV-1024 - LKR 3,450', 'ip' => '192.168.1.45', 'type' => 'Transaction'],
-            ['id' => 2, 'timestamp' => '2026-03-14 14:30:02', 'user' => 'admin@multibizpos.lk', 'action' => 'Tenant Activated', 'details' => 'Ratnayake Foods - Enterprise', 'ip' => '10.0.0.1', 'type' => 'Admin'],
-            ['id' => 3, 'timestamp' => '2026-03-14 14:28:45', 'user' => 'kamala@pereragrocery.lk', 'action' => 'Login', 'details' => 'Successful login from Colombo', 'ip' => '192.168.1.46', 'type' => 'Auth'],
-            ['id' => 4, 'timestamp' => '2026-03-14 14:25:10', 'user' => 'saman@pereragrocery.lk', 'action' => 'Product Added', 'details' => 'New product: Organic Tea 100g', 'ip' => '192.168.1.47', 'type' => 'Inventory'],
-            ['id' => 5, 'timestamp' => '2026-03-14 14:20:33', 'user' => 'dilani@silvaelectronics.lk', 'action' => 'Sale Completed', 'details' => 'INV-2045 - LKR 45,800', 'ip' => '192.168.2.12', 'type' => 'Transaction'],
-            ['id' => 6, 'timestamp' => '2026-03-14 14:15:00', 'user' => 'system', 'action' => 'Backup Completed', 'details' => 'Daily database backup successful', 'ip' => '10.0.0.1', 'type' => 'System'],
-            ['id' => 7, 'timestamp' => '2026-03-14 14:10:22', 'user' => 'admin@multibizpos.lk', 'action' => 'Subscription Updated', 'details' => 'Mendis Pharmacy - Basic to Pro', 'ip' => '10.0.0.1', 'type' => 'Admin'],
-            ['id' => 8, 'timestamp' => '2026-03-14 14:05:18', 'user' => 'ruwan@pereragrocery.lk', 'action' => 'Login Failed', 'details' => 'Invalid password attempt', 'ip' => '192.168.1.50', 'type' => 'Auth'],
-            ['id' => 9, 'timestamp' => '2026-03-14 14:00:00', 'user' => 'system', 'action' => 'Health Check', 'details' => 'All services operational', 'ip' => '10.0.0.1', 'type' => 'System'],
-            ['id' => 10, 'timestamp' => '2026-03-14 13:55:42', 'user' => 'nimal@pereragrocery.lk', 'action' => 'Settings Updated', 'details' => 'Tax rate changed to 15%', 'ip' => '192.168.1.45', 'type' => 'Settings'],
-        ];
-        $columns = [
-            ['key' => 'timestamp', 'label' => 'Timestamp', 'sortable' => true],
-            ['key' => 'user', 'label' => 'User', 'sortable' => true],
-            ['key' => 'action', 'label' => 'Action', 'sortable' => true],
-            ['key' => 'details', 'label' => 'Details'],
-            ['key' => 'type', 'label' => 'Type'],
-            ['key' => 'ip', 'label' => 'IP Address'],
-        ];
-    @endphp
-    @component('partials.data-table', [
-        'columns' => $columns,
-        'data' => $logs,
-        'searchPlaceholder' => 'Search logs...',
-        'searchKey' => 'user',
-        'pageSize' => 10
+@php
+    $menuItems = [
+        ['label' => 'Dashboard', 'path' => '/admin/dashboard', 'icon' => 'D', 'match' => 'admin/dashboard*'],
+        ['label' => 'Tenants', 'path' => '/admin/tenants', 'icon' => 'T', 'match' => 'admin/tenants*'],
+        ['label' => 'Subscriptions', 'path' => '/admin/subscriptions', 'icon' => '$', 'match' => 'admin/subscriptions*'],
+        ['label' => 'System Logs', 'path' => '/admin/logs', 'icon' => 'L', 'match' => 'admin/logs*'],
+    ];
+    $types = $types ?? ['All', 'Transaction', 'Auth', 'Admin', 'Inventory'];
+@endphp
+<div class="flex min-h-screen bg-gray-50">
+    @include('partials.sidebar', [
+        'menuItems' => $menuItems,
+        'userName' => 'Admin User',
+        'userRole' => 'Platform Admin',
     ])
-    @endcomponent
+
+    <main class="flex-1 min-w-0">
+        <div class="p-4 sm:p-6 lg:p-8">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">System Logs</h1>
+                <p class="text-sm text-gray-500 mt-1">Monitor platform activity and events</p>
+            </div>
+
+            <div class="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
+                <span class="text-xs text-gray-400">Filter</span>
+                @foreach ($types as $type)
+                    <button class="px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-all {{ $type === 'All' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">{{ $type }}</button>
+                @endforeach
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-gray-100">
+                    <div class="relative max-w-sm">
+                        <input type="text" placeholder="Search logs..." class="w-full pl-4 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-100">
+                                <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Timestamp</th>
+                                <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">User</th>
+                                <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Action</th>
+                                <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Details</th>
+                                <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">Type</th>
+                                <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @foreach ($logs as $log)
+                                <tr class="hover:bg-gray-50/50">
+                                    <td class="px-4 py-3 text-xs font-mono text-gray-500">{{ $log['timestamp'] }}</td>
+                                    <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $log['user'] }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-700">{{ $log['action'] }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-500">{{ $log['details'] }}</td>
+                                    <td class="px-4 py-3">
+                                        @php
+                                            $typeColor = match($log['type']) {
+                                                'Transaction' => 'bg-emerald-50 text-emerald-700',
+                                                'Auth' => 'bg-blue-50 text-blue-700',
+                                                'Admin' => 'bg-purple-50 text-purple-700',
+                                                'Inventory' => 'bg-amber-50 text-amber-700',
+                                                'System' => 'bg-gray-100 text-gray-600',
+                                                'Settings' => 'bg-rose-50 text-rose-700',
+                                                default => 'bg-gray-100 text-gray-600',
+                                            };
+                                        @endphp
+                                        <span class="text-xs font-medium px-2 py-0.5 rounded-full {{ $typeColor }}">{{ $log['type'] }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-xs font-mono text-gray-400">{{ $log['ip'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+                    <p class="text-xs text-gray-500">Showing 1-{{ $logs->count() }} of {{ $logs->count() }}</p>
+                    <div class="flex items-center gap-1">
+                        <button class="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" disabled>Prev</button>
+                        <span class="text-xs font-medium text-gray-600 px-2">1 / 1</span>
+                        <button class="p-1.5 rounded-md hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors" disabled>Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 @endsection

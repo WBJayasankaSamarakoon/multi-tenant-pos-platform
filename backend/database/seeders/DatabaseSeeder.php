@@ -4,8 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,11 +18,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        if (! Schema::hasTable('users')) {
+            Artisan::call('migrate', [
+                '--force' => true,
+            ]);
+        }
+
         $users = [
             ['name' => 'Owner Demo', 'email' => 'owner@demo.lk', 'role' => 'owner'],
             ['name' => 'Cashier Demo', 'email' => 'cashier@demo.lk', 'role' => 'cashier'],
             ['name' => 'Manager Demo', 'email' => 'manager@demo.lk', 'role' => 'manager'],
             ['name' => 'Platform Admin Demo', 'email' => 'admin@demo.lk', 'role' => 'admin'],
+            ['name' => 'Northwind Owner', 'email' => 'owner2@demo.lk', 'role' => 'owner'],
+            ['name' => 'Northwind Cashier', 'email' => 'cashier2@demo.lk', 'role' => 'cashier'],
+            ['name' => 'Northwind Manager', 'email' => 'manager2@demo.lk', 'role' => 'manager'],
         ];
 
         foreach ($users as $user) {
@@ -123,6 +134,69 @@ class DatabaseSeeder extends Seeder
                 ['owner_user_id' => $ownerId, 'period' => $payment['period']],
                 $payment + ['owner_user_id' => $ownerId, 'created_at' => now(), 'updated_at' => now()]
             );
+        }
+
+        $secondaryOwnerId = User::where('email', 'owner2@demo.lk')->value('id');
+        if ($secondaryOwnerId) {
+            DB::table('owner_companies')->updateOrInsert(
+                ['owner_user_id' => $secondaryOwnerId],
+                [
+                    'name' => 'Northwind Traders',
+                    'email' => 'hello@northwind.lk',
+                    'phone' => '+94 77 987 6543',
+                    'address' => 'No. 8, Kandy Road, Kurunegala',
+                    'currency' => 'LKR',
+                    'tax_rate' => 15,
+                    'invoice_template' => 'compact',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            DB::table('owner_subscriptions')->updateOrInsert(
+                ['owner_user_id' => $secondaryOwnerId],
+                [
+                    'plan' => 'Basic',
+                    'status' => 'Active',
+                    'price' => 2500,
+                    'renews_at' => now()->addMonth()->toDateString(),
+                    'user_limit' => 2,
+                    'product_limit' => 200,
+                    'transaction_limit' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            foreach ([
+                ['sku' => 'N001', 'name' => 'Tea Pack 250g', 'category' => 'Groceries', 'price' => 650, 'stock' => 18, 'low_stock_threshold' => 10, 'supplier' => 'North Tea Co'],
+                ['sku' => 'N002', 'name' => 'Biscuits 400g', 'category' => 'Snacks', 'price' => 420, 'stock' => 22, 'low_stock_threshold' => 12, 'supplier' => 'North Snacks Ltd'],
+            ] as $product) {
+                DB::table('owner_products')->updateOrInsert(
+                    ['owner_user_id' => $secondaryOwnerId, 'sku' => $product['sku']],
+                    $product + ['owner_user_id' => $secondaryOwnerId, 'created_at' => now(), 'updated_at' => now()]
+                );
+            }
+
+            foreach ([
+                ['name' => 'Suren Perera', 'role' => 'Manager', 'email' => 'suren@northwind.lk', 'phone' => '+94 77 654 3210', 'status' => 'Active', 'joined_at' => '2025-04-01'],
+                ['name' => 'Tharushi Silva', 'role' => 'Cashier', 'email' => 'tharushi@northwind.lk', 'phone' => '+94 77 654 3211', 'status' => 'Active', 'joined_at' => '2025-04-10'],
+            ] as $employee) {
+                DB::table('owner_employees')->updateOrInsert(
+                    ['owner_user_id' => $secondaryOwnerId, 'email' => $employee['email']],
+                    $employee + ['owner_user_id' => $secondaryOwnerId, 'created_at' => now(), 'updated_at' => now()]
+                );
+            }
+
+            foreach ([
+                ['customer_code' => 'N001', 'name' => 'Asanka Jayasuriya', 'email' => 'asanka@gmail.com', 'phone' => '+94 77 555 1212', 'total_purchases' => 16500, 'visits' => 9],
+                ['customer_code' => 'N002', 'name' => 'Nimali Fernando', 'email' => 'nimali@gmail.com', 'phone' => '+94 77 555 3434', 'total_purchases' => 22100, 'visits' => 14],
+            ] as $customer) {
+                DB::table('owner_customers')->updateOrInsert(
+                    ['owner_user_id' => $secondaryOwnerId, 'customer_code' => $customer['customer_code']],
+                    $customer + ['owner_user_id' => $secondaryOwnerId, 'created_at' => now(), 'updated_at' => now()]
+                );
+            }
         }
     }
 }
