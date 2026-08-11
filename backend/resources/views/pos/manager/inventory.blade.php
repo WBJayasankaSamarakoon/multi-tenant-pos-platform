@@ -32,6 +32,12 @@
                 </button>
             </div>
 
+            @if (session('status'))
+                <div class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" data-tab-group data-tab-initial="products">
                 <div class="flex gap-1 bg-gray-100 rounded-lg p-0.5 w-fit m-4">
                     <button data-tab-target="products" data-active-classes="bg-white shadow-sm text-gray-900" data-inactive-classes="text-gray-500" class="px-4 py-2 text-sm font-medium rounded-md transition-all bg-white shadow-sm text-gray-900">Products</button>
@@ -95,7 +101,7 @@
                                         <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $supplierName }}</td>
                                         <td class="px-4 py-3 text-sm text-gray-700">-</td>
                                         <td class="px-4 py-3 text-sm text-gray-700">-</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $products->where('supplier', $supplierName)->count() }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700">{{ collect($products)->where('supplier', $supplierName)->count() }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -114,45 +120,48 @@
             <h3 class="text-lg font-semibold text-gray-900">Add Product</h3>
             <button data-modal-close="#add-product-modal" class="p-1 rounded-md hover:bg-gray-100">X</button>
         </div>
-        <div class="p-5 space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name</label>
-                <input type="text" placeholder="Product name" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+        <form method="POST" action="/manager/inventory">
+            @csrf
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">SKU</label>
+                    <input name="sku" type="text" placeholder="Optional SKU" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name</label>
+                    <input name="name" type="text" placeholder="Product name" required class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (LKR)</label>
+                        <input name="price" type="number" min="0" step="0.01" placeholder="0" required class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock</label>
+                        <input name="stock" type="number" min="0" placeholder="0" required class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
+                        <select name="category" required class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                            <option value="Groceries">Groceries</option>
+                            <option value="Cooking">Cooking</option>
+                            <option value="Dairy">Dairy</option>
+                            <option value="Beverages">Beverages</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
+                        <input name="supplier" type="text" placeholder="Supplier name" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Price (LKR)</label>
-                    <input type="number" placeholder="0" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock</label>
-                    <input type="number" placeholder="0" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                </div>
+            <div class="flex gap-3 p-5 border-t border-gray-100">
+                <button type="button" data-modal-close="#add-product-modal" class="flex-1 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 text-sm">Cancel</button>
+                <button type="submit" class="flex-1 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 text-sm">Add Product</button>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
-                    <select class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                        <option>Groceries</option>
-                        <option>Cooking</option>
-                        <option>Dairy</option>
-                        <option>Beverages</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
-                    <select class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
-                        <option>Lanka Rice Mills</option>
-                        <option>Ceylon Oils Ltd</option>
-                        <option>Import Foods Ltd</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="flex gap-3 p-5 border-t border-gray-100">
-            <button data-modal-close="#add-product-modal" class="flex-1 py-2.5 border border-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-50 text-sm">Cancel</button>
-            <button data-modal-close="#add-product-modal" class="flex-1 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 text-sm">Add Product</button>
-        </div>
+        </form>
     </div>
 </div>
 @endsection

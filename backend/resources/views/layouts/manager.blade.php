@@ -27,9 +27,9 @@
 @endphp
 @include('partials.sidebar', [
     'menuItems' => $managerMenuItems,
-    'userName' => 'Saman Kumara',
+    'userName' => auth()->user()?->name ?? 'Manager',
     'userRole' => 'Manager',
-    'companyName' => 'Perera Grocery'
+    'companyName' => data_get($company, 'name')
 ])
 
 <div class="flex-1 min-h-screen">

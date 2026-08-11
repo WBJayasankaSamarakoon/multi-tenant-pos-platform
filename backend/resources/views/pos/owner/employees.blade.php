@@ -13,10 +13,7 @@
         ['label' => 'Settings', 'path' => '/owner/settings', 'icon' => 'S', 'match' => 'owner/settings*'],
         ['label' => 'Subscription', 'path' => '/owner/subscription', 'icon' => '$', 'match' => 'owner/subscription*'],
     ];
-    $employees = $employees ?? [
-        (object) ['name' => 'Nimal Perera', 'role' => 'Business Owner', 'email' => 'nimal@pereragrocery.lk', 'phone' => '+94 77 123 4567', 'status' => 'Active', 'joined_at' => '2025-01-15'],
-        (object) ['name' => 'Saman Kumara', 'role' => 'Manager', 'email' => 'saman@pereragrocery.lk', 'phone' => '+94 77 234 5678', 'status' => 'Active', 'joined_at' => '2025-02-01'],
-    ];
+    $employees = collect($employees ?? []);
 @endphp
 <div class="flex min-h-screen bg-gray-50">
     @include('partials.sidebar', [
@@ -39,7 +36,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @foreach ($employees as $emp)
+                @forelse ($employees as $emp)
                     @php
                         $initials = collect(explode(' ', $emp->name))->map(fn ($n) => substr($n, 0, 1))->implode('');
                         $roleColors = [
@@ -89,7 +86,11 @@
                             </button>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-span-full bg-white rounded-xl border border-gray-100 shadow-sm p-8 text-center text-gray-500">
+                        No employees have been added yet.
+                    </div>
+                @endforelse
             </div>
         </div>
     </main>
@@ -107,7 +108,7 @@
             <div class="p-5 space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-                    <input name="name" type="text" placeholder="e.g., Saman Kumara" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                    <input name="name" type="text" placeholder="e.g., Team Member" class="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Email</label>

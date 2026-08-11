@@ -53,18 +53,6 @@
             </form>
 
             <p class="mt-6 text-center text-sm text-gray-500">Don't have an account? <a href="/register" class="text-blue-600 font-medium hover:text-blue-700">Register your business</a></p>
-
-            <div class="mt-10 pt-8 border-t border-gray-200">
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>Quick Demo Access</p>
-                <div class="grid grid-cols-2 gap-2">
-                    @foreach ([['Business Owner', 'owner@demo.lk', 'bg-blue-100 text-blue-700', '/owner'], ['Cashier', 'cashier@demo.lk', 'bg-emerald-100 text-emerald-700', '/cashier'], ['Manager', 'manager@demo.lk', 'bg-amber-100 text-amber-700', '/manager'], ['Platform Admin', 'admin@demo.lk', 'bg-purple-100 text-purple-700', '/admin']] as $demo)
-                        <button type="button" data-demo-login data-demo-email="{{ $demo[1] }}" data-demo-password="demo1234" data-demo-path="{{ $demo[3] }}" class="flex flex-col items-start p-3 rounded-lg border border-gray-200 hover:border-blue-200 hover:bg-blue-50/50 transition-all text-left">
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full {{ $demo[2] }}">{{ $demo[0] }}</span>
-                            <span class="text-xs text-gray-500 mt-1.5 truncate w-full">{{ $demo[1] }}</span>
-                        </button>
-                    @endforeach
-                </div>
-            </div>
         </div>
     </div>
 
