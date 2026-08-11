@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { PricingPageComponent } from './pages/pricing-page/pricing-page.component';
 import { FeaturesPageComponent } from './pages/features-page/features-page.component';
-import { AboutPageComponent } from './pages/about-page/about-page.component';
+import { AboutPageComponent } from './pages/about-page';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent },

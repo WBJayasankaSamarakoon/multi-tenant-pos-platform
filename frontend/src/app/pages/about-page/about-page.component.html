@@ -1,48 +1,322 @@
-<div class="w-full min-h-screen bg-gray-50">
-  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+<div class="w-full min-h-screen bg-white">
+  <nav
+    class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+    [ngClass]="scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100' : 'bg-transparent'">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <a routerLink="/" class="flex items-center gap-2">
-          <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">M</div>
-          <span class="text-sm font-bold text-gray-900">MultiBiz<span class="text-blue-600">POS</span></span>
+      <div class="flex items-center justify-between h-16 lg:h-[72px]">
+        <a routerLink="/" (click)="closeMobileMenu()" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-700 transition-colors">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <span class="text-lg font-bold text-gray-900 transition-colors">
+            MultiBiz<span class="text-blue-600">POS</span>
+          </span>
         </a>
+
         <div class="hidden md:flex items-center gap-8">
-          <a routerLink="/features" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-          <a routerLink="/pricing" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-          <a routerLink="/about" class="text-sm text-blue-600 font-semibold">About</a>
-          <a href="http://localhost:8000/login" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Login</a>
-          <a [href]="backendRegisterUrl" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">Get Started</a>
+          <a routerLink="/" fragment="features" class="text-sm font-medium transition-colors hover:text-blue-600" [ngClass]="scrolled ? 'text-gray-600' : 'text-gray-700'">Features</a>
+          <a routerLink="/pricing" class="text-sm font-medium transition-colors hover:text-blue-600" [ngClass]="scrolled ? 'text-gray-600' : 'text-gray-700'">Pricing</a>
+          <a routerLink="/about" class="text-sm font-medium transition-colors text-blue-600">About</a>
+        </div>
+
+        <div class="hidden md:flex items-center gap-3">
+          <a [href]="backendLoginUrl" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors px-4 py-2">
+            Sign In
+          </a>
+          <a [href]="backendRegisterUrl" class="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors px-5 py-2.5 rounded-lg shadow-sm">
+            Get Started Free
+          </a>
+        </div>
+
+        <button
+          type="button"
+          (click)="toggleMobileMenu()"
+          class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          [attr.aria-expanded]="mobileOpen"
+          aria-label="Toggle menu">
+          <svg *ngIf="mobileOpen; else menuIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <ng-template #menuIcon>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </ng-template>
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="md:hidden bg-white overflow-hidden transition-all duration-300"
+      [ngClass]="mobileOpen ? 'border-t border-gray-100 shadow-lg max-h-screen opacity-100' : 'max-h-0 opacity-0 pointer-events-none'">
+      <div class="px-4 py-4 space-y-1">
+        <a routerLink="/" fragment="features" (click)="closeMobileMenu()" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+          Features
+        </a>
+        <a routerLink="/pricing" (click)="closeMobileMenu()" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+          Pricing
+        </a>
+        <a routerLink="/about" (click)="closeMobileMenu()" class="block px-4 py-3 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg">
+          About
+        </a>
+        <div class="pt-3 border-t border-gray-100 space-y-2">
+          <a [href]="backendLoginUrl" (click)="closeMobileMenu()" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg text-center">
+            Sign In
+          </a>
+          <a [href]="backendRegisterUrl" (click)="closeMobileMenu()" class="block px-4 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg text-center">
+            Get Started Free
+          </a>
         </div>
       </div>
     </div>
   </nav>
 
-  <section class="py-20 lg:py-28">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <span class="text-sm font-semibold text-blue-600 uppercase tracking-wider">About</span>
-        <h1 class="mt-3 text-3xl lg:text-5xl font-bold text-gray-900">Built for Sri Lankan SMB growth</h1>
-        <p class="mt-4 text-lg text-gray-600">MultiBiz POS helps local businesses modernize sales, inventory, and operations with one platform.</p>
+  <section class="relative pt-28 pb-20 lg:pt-32 lg:pb-24 overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-emerald-50/30"></div>
+    <div class="absolute top-20 right-0 w-96 h-96 bg-blue-100/40 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-80 h-80 bg-emerald-100/30 rounded-full blur-3xl"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="hero-fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold mb-6">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          About MultiBiz POS
+        </div>
+        <h1 class="hero-fade-up hero-delay-1 text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
+          Built to help Sri Lankan businesses grow with confidence
+        </h1>
+        <p class="hero-fade-up hero-delay-2 mt-6 text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+          MultiBiz POS brings sales, stock, staff, and reporting into one clean platform so owners can move faster without losing control.
+        </p>
+        <div class="hero-fade-up hero-delay-3 mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a [href]="backendRegisterUrl" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/25">
+            Start Free Trial
+          </a>
+          <a routerLink="/pricing" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white text-gray-700 font-semibold rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors">
+            View Pricing
+          </a>
+        </div>
       </div>
 
-      <div class="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900">Our Mission</h2>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Deliver a practical, affordable, and fast POS platform with strong local support and LKR-friendly pricing.</p>
+      <div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Businesses</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900">500+</p>
+          <p class="mt-2 text-sm text-gray-500">Designed for real shops, cafes, pharmacies, and wholesalers.</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900">How We Work</h2>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Marketing and product information live in Angular, while secure auth and business operations run in Laravel.</p>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Speed</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900">Fast</p>
+          <p class="mt-2 text-sm text-gray-500">Built for quick checkout, simple inventory work, and clear reporting.</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900">Designed for Roles</h2>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Owner, manager, cashier, and admin each get role-focused workflows, reports, and permissions.</p>
-        </div>
-        <div class="bg-white rounded-2xl border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900">Cloud Advantage</h2>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">No installation, no complex setup, and access from desktop, tablet, and mobile browsers.</p>
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Pricing</p>
+          <p class="mt-2 text-3xl font-bold text-gray-900">LKR</p>
+          <p class="mt-2 text-sm text-gray-500">Local pricing and role-based access made for Sri Lankan teams.</p>
         </div>
       </div>
     </div>
   </section>
+
+  <section class="py-20 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-sm font-semibold text-blue-600 uppercase tracking-wider">What we do</span>
+        <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-gray-900">One platform, built around the daily flow of a business</h2>
+        <p class="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">We focus on the parts that matter most: faster sales, better stock control, cleaner reporting, and less friction for your team.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:border-blue-100 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Sales</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">A smooth POS flow for billing, discounts, invoices, and day-to-day checkout speed.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:border-emerald-100 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Inventory</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Track stock, categories, suppliers, and low-stock alerts without fighting the software.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:border-purple-100 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Reporting</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">See sales, performance, and product trends in a way that’s easy to act on quickly.</p>
+        </div>
+        <div class="p-6 rounded-2xl border border-gray-100 bg-white hover:shadow-lg hover:border-amber-100 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Teams</h3>
+          <p class="text-sm text-gray-500 leading-relaxed">Give owners, managers, cashiers, and admins the access they need — and nothing they don’t.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
+        <div>
+          <span class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Our mission</span>
+          <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-gray-900">Make local retail software feel calm, clear, and dependable</h2>
+          <p class="mt-4 text-gray-500 leading-relaxed">We want small and medium businesses to have software that respects their time, their budget, and the way they actually work every day.</p>
+
+          <div class="mt-8 space-y-5">
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Simple by design</h4>
+                <p class="text-sm text-gray-500 mt-1">We keep the interface clean so new teams can learn it fast and use it confidently.</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Built for real workflows</h4>
+                <p class="text-sm text-gray-500 mt-1">From checkout to stock updates, the flow is based on how shops actually operate.</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-gray-900">Support that fits the region</h4>
+                <p class="text-sm text-gray-500 mt-1">We keep pricing, currency, and terminology grounded in Sri Lankan business needs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 lg:p-8">
+          <h3 class="text-xl font-semibold text-gray-900">How the platform is organized</h3>
+          <div class="mt-6 space-y-4">
+            <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+              <p class="text-sm font-semibold text-gray-900">Frontend experience</p>
+              <p class="mt-1 text-sm text-gray-500">The public site, about page, and pricing pages stay lightweight and polished in Angular.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+              <p class="text-sm font-semibold text-gray-900">Business operations</p>
+              <p class="mt-1 text-sm text-gray-500">Auth, multi-tenant data, and business workflows run in Laravel for security and flexibility.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+              <p class="text-sm font-semibold text-gray-900">Role-based access</p>
+              <p class="mt-1 text-sm text-gray-500">Owner, manager, cashier, and admin each see the tools they need for their role.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Our values</span>
+        <h2 class="mt-3 text-3xl lg:text-4xl font-bold text-gray-900">The principles that shape the product</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <p class="text-sm font-semibold text-blue-600 uppercase tracking-wider">Clarity</p>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Every screen should make the next step obvious. No clutter, no guessing, no unnecessary steps.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <p class="text-sm font-semibold text-emerald-600 uppercase tracking-wider">Reliability</p>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">Stores need software that stays steady under daily use. We optimize for dependability and graceful handling.</p>
+        </div>
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <p class="text-sm font-semibold text-purple-600 uppercase tracking-wider">Local fit</p>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">We keep the product grounded in local pricing, currency, and the realities of small business operations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 lg:py-28 bg-navy">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl lg:text-4xl font-bold text-white">If you’re building a business, we’d love to help you run it better</h2>
+      <p class="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">Start with a free trial, explore the platform, and see whether it fits your team’s daily workflow.</p>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a [href]="backendRegisterUrl" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-500 transition-colors">
+          Start Free Trial
+        </a>
+        <a [href]="backendLoginUrl" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-slate-700 text-white font-semibold rounded-xl hover:bg-slate-600 transition-colors">
+          Sign In
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <span class="text-sm font-bold text-white">MultiBiz<span class="text-blue-400">POS</span></span>
+          </div>
+          <p class="text-sm leading-relaxed">Cloud-based POS platform for Sri Lankan SMBs. Simple, affordable, powerful.</p>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold text-white mb-4">Product</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a routerLink="/" fragment="features" class="hover:text-white transition-colors">Features</a></li>
+            <li><a routerLink="/pricing" class="hover:text-white transition-colors">Pricing</a></li>
+            <li><a [href]="backendLoginUrl" class="hover:text-white transition-colors">Login</a></li>
+            <li><a [href]="backendRegisterUrl" class="hover:text-white transition-colors">Get Started</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold text-white mb-4">Company</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a routerLink="/about" class="hover:text-white transition-colors">About</a></li>
+            <li><a routerLink="/" fragment="about" class="hover:text-white transition-colors">About Home</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold text-white mb-4">Legal</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-10 pt-6 border-t border-gray-800 text-center text-xs">
+        <p>&copy; 2026 MultiBiz POS. All rights reserved. Made in Sri Lanka &#x1F1F1;&#x1F1F0;</p>
+      </div>
+    </div>
+  </footer>
 </div>
