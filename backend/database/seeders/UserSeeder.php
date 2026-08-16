@@ -4,31 +4,23 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     /**
-     * Seed demo users used by the public login flow.
+     * Seed only the Platform Administrator user.
      */
     public function run(): void
     {
-        $users = [
-            ['name' => 'Demo Owner', 'email' => 'owner@demo.lk'],
-            ['name' => 'Demo Cashier', 'email' => 'cashier@demo.lk'],
-            ['name' => 'Demo Manager', 'email' => 'manager@demo.lk'],
-            ['name' => 'Demo Admin', 'email' => 'admin@demo.lk'],
-            ['name' => 'Test User', 'email' => 'test@example.com'],
-        ];
-
-        foreach ($users as $user) {
-            User::updateOrCreate(
-                ['email' => $user['email']],
-                [
-                    'name' => $user['name'],
-                    'password' => 'demo1234',
-                    'email_verified_at' => now(),
-                ]
-            );
-        }
+        User::updateOrCreate(
+            ['email' => 'admin@demo.lk'],
+            [
+                'name' => 'Platform Administrator',
+                'role' => 'admin',
+                'password' => Hash::make('demo1234'),
+                'email_verified_at' => now(),
+            ]
+        );
     }
 }

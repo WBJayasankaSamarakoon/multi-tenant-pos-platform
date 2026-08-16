@@ -273,9 +273,29 @@ class OwnerController extends Controller
 
     public function customers(): View
     {
+        $ownerId = $this->ownerId();
+        $customers = DB::table('owner_customers')
+            ->where('owner_user_id', $ownerId)
+            ->orderBy('name')
+            ->get()
+            ->map(function ($customer) use ($ownerId) {
+                $salesStats = DB::table('owner_sales')
+                    ->where('owner_user_id', $ownerId)
+                    ->where('customer_name', $customer->name)
+                    ->selectRaw('COUNT(*) as visit_count, SUM(total) as purchase_total')
+                    ->first();
+
+                if ($salesStats && $salesStats->visit_count > 0) {
+                    $customer->visits = max((int) $customer->visits, (int) $salesStats->visit_count);
+                    $customer->total_purchases = max((float) $customer->total_purchases, (float) $salesStats->purchase_total);
+                }
+
+                return $customer;
+            });
+
         return view('pos.owner.customers', [
             'company' => $this->company(),
-            'customers' => DB::table('owner_customers')->where('owner_user_id', $this->ownerId())->orderBy('name')->get(),
+            'customers' => $customers,
         ]);
     }
 
