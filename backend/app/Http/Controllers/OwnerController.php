@@ -263,10 +263,21 @@ class OwnerController extends Controller
 
     public function deleteEmployee(int $employeeId): RedirectResponse
     {
-        DB::table('owner_employees')
+        $employee = DB::table('owner_employees')
             ->where('id', $employeeId)
             ->where('owner_user_id', $this->ownerId())
-            ->delete();
+            ->first();
+
+        if ($employee) {
+            DB::table('users')
+                ->where('email', $employee->email)
+                ->whereIn('role', ['manager', 'cashier'])
+                ->delete();
+
+            DB::table('owner_employees')
+                ->where('id', $employeeId)
+                ->delete();
+        }
 
         return back();
     }
